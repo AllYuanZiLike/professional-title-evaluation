@@ -8,11 +8,11 @@
 <!--        <el-input v-model="dataForm.info" placeholder="评议活动介绍"></el-input>-->
         <wangEditor v-model="dataForm.info" style="height: 15vh"></wangEditor>
       </el-form-item>
-      <el-form-item v-if="dataForm.stage > 1" label="第几环节" prop="link">
+      <el-form-item label="第几环节" prop="link">
         <!--        <el-input v-model="dataForm.link" placeholder="第几环节"></el-input>-->
         <el-input-number v-model="dataForm.link" :min="0" :max="10" />
       </el-form-item>
-      <el-form-item label="第几阶段" prop="stage">
+      <el-form-item v-if="dataForm.link > 1" label="第几阶段" prop="stage">
 <!--        <el-input v-model="dataForm.stage" placeholder="第几阶段"></el-input>-->
         <el-input-number v-model="dataForm.stage" :min="0" :max="10" />
       </el-form-item>
@@ -27,7 +27,7 @@
 <!--        </el-radio-group>-->
 <!--        <el-input v-if="isZero==='2'" style="width: 50%;margin-left: 5%;" v-model="dataForm.superiors" placeholder="点击选择以往结果"></el-input>-->
 <!--      </el-form-item>-->
-      <el-form-item v-if="dataForm.stage === 0" label="指标数" prop="indicator">
+      <el-form-item v-if="dataForm.link === 0" label="指标数" prop="indicator">
         <el-input v-model="dataForm.indicator" placeholder="指标数"></el-input>
       </el-form-item>
       <el-form-item label="评审职称等级" prop="position">
@@ -54,13 +54,13 @@
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="dataForm.stage == 0" label="竞争性参评人数（竞争型总人数）" prop="competitiveNum">
+      <el-form-item v-if="dataForm.link == 0" label="竞争性参评人数（竞争型总人数）" prop="competitiveNum">
         <el-input v-model="dataForm.competitiveNum" placeholder="竞争性参评人数（竞争型总人数）"></el-input>
       </el-form-item>
-      <el-form-item v-if="dataForm.stage == 0"  label="竞争性指标数" prop="competitiveIndicator">
+      <el-form-item v-if="dataForm.link == 0"  label="竞争性指标数" prop="competitiveIndicator">
         <el-input v-model="dataForm.competitiveIndicator" placeholder="竞争性指标数"></el-input>
       </el-form-item>
-      <el-form-item v-if="dataForm.stage == 0" label="选取人数（参与人数）" prop="participantNum">
+      <el-form-item v-if="dataForm.link == 0" label="选取人数（参与人数）" prop="participantNum">
         <el-input v-model="dataForm.participantNum" placeholder="选取人数（参与人数）"></el-input>
       </el-form-item>
 <!--      <el-form-item label="剩余指标数" prop="residualIndicator">-->
@@ -72,25 +72,6 @@
       <el-button @click="visible = false">{{ $t("cancel") }}</el-button>
       <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t("confirm") }}</el-button>
     </template>
-  </el-dialog>
-  <el-dialog v-model="state.addUserVisible" title="用户" :close-on-click-modal="false" :close-on-press-escape="false">
-<!--    <Dept :placeholder="$t('dept.title')" v-model="dataForm.deptName" @userForm="userForm" :projectId="props.projectId" :userpage="state.userpage" :userlimit="state.userlimit" :totalUser="state.totalUser" :role="dataForm.role" ></Dept><br>-->
-    <el-table v-loading="state.dataListLoading" ref="dataUserListRef" :data="state.dataUserForm" border @selection-change="dataListSelectionChange" style="width: 100%">
-      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="username" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
-<!--      <el-table-column prop="deptName" :label="$t('user.deptName')" header-align="center" align="center"></el-table-column>-->
-      <el-table-column prop="status" :label="$t('user.status')" sortable="custom" header-align="center" align="center">
-        <template v-slot="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">{{ $t("user.status0") }}</el-tag>
-          <el-tag v-else size="small" type="success">{{ $t("user.status1") }}</el-tag>
-        </template>
-      </el-table-column>
-    </el-table>
-    <template v-slot:footer>
-      <el-button @click="state.addUserVisible = false">{{ $t("cancel") }}</el-button>
-      <el-button type="primary" @click="dataFormUserSubmitHandle()">{{ $t("confirm") }}</el-button>
-    </template>
-    <el-pagination :current-page="state.userpage" :page-sizes="[10, 20, 50, 100]" :page-size="state.userlimit" :total="state.totalUser" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeUserHandle" @current-change="pageCurrentChangeUserHandle"> </el-pagination>
   </el-dialog>
 </template>
 
@@ -107,7 +88,6 @@ const { t } = useI18n();
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
-const isZero = ref('1');
 const dataFormRef = ref();
 
 const dataForm = reactive({
@@ -213,41 +193,6 @@ const positions = reactive([
   },
 
 ])
-
-
-const view = reactive({
-  roleText:[
-    // {value:0,label:"项目创建者"},
-    {value:1,label:"项目负责人"},
-    {value:2,label:"项目成员"},
-    {value:3,label:"项目联系人"},
-  ],
-  addUserVisible:false,
-  getDataListIsPage: true,
-  totalUser:0,
-  userpage:1,
-  userlimit:10,
-  dataUserForm: [],
-  projectName:""
-})
-
-const state = reactive({ ...useView(view), ...toRefs(view) });
-
-const getSuperiors = ()=>{
-  baseService.get("/occupation/participant/page",{order: state.order, orderField: state.orderField, page: state.getDataListIsPage ? state.page : null, limit: state.getDataListIsPage ? state.limit : null,
-    ...{name: "", applicationType: "", unitId: "", sGroup: "", professionalId: "", positionId: "", recommendType: "", honoraryName: "",}})
-}
-const dataListSelectionChange=(val:any)=>{
-  console.log(val)
-  for (let i = 0; i < val.length; i++) {
-    dataForm.superiors = dataForm.superiors  + val[i].id + ',';
-    dataForm.superiorsName = dataForm.superiorsName + val[i].username + '，';
-  }
-}
-
-const dataFormUserSubmitHandle = ()=> {
-  state.addUserVisible = false;
-}
 
 const rules = ref({
 });
