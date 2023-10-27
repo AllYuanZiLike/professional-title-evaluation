@@ -5,7 +5,7 @@
       <div class="el-upload__text" v-html="$t('upload.text')"></div>
       <template v-slot:tip>
         <div class="el-upload__tip">
-          {{ t("upload.tip", { format: "jpg、png、gif" }) }}
+          {{ t("upload.tip", { format: "pdf" }) }}
         </div>
       </template>
     </el-upload>
@@ -20,7 +20,7 @@ import app from "@/constants/app";
 import { useI18n } from "vue-i18n";
 import { ElMessage } from "element-plus";
 const { t } = useI18n();
-const emit = defineEmits(["refreshDataList"]);
+const emit = defineEmits(["getFileId"]);
 
 const visible = ref(false);
 const url = ref("");
@@ -36,8 +36,8 @@ const init = () => {
 
 // 上传之前
 const beforeUploadHandle = (file: IObject) => {
-  if (file.type !== "image/jpg" && file.type !== "image/jpeg" && file.type !== "image/png" && file.type !== "image/gif") {
-    ElMessage.error(t("upload.tip", { format: "jpg、png、gif" }));
+  if (file.type !== "application/pdf") {
+    ElMessage.error(t("upload.tip", { format: "pdf" }));
     return false;
   }
   num.value++;
@@ -52,13 +52,14 @@ const successHandle = (res: IObject, file: IObject, list: IObject[]) => {
 
   fileList.value = list;
   num.value--;
+  console.log(fileList)
   if (num.value === 0) {
     ElMessage.success({
       message: t("prompt.success"),
       duration: 500,
       onClose: () => {
         visible.value = false;
-        emit("refreshDataList");
+        emit("getFileId",fileList);
       }
     });
   }

@@ -6,6 +6,12 @@
         <!--        <el-input v-model="state.dataForm.name" placeholder="参与人姓名" clearable></el-input>-->
         <!--      </el-form-item>-->
         <el-form-item>
+          <!--        <el-input style="width: 160px;" v-model="state.dataForm.honoraryName" placeholder="荣誉名称" clearable></el-input>-->
+          <el-select style="width: 160px;" v-model="state.dataForm.honoraryName" clearable placeholder="请选择职称类型">
+            <el-option v-for="item in honorTypes" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
           <!--        <el-input style="width: 160px;" v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
           <el-select style="width: 160px;" v-model="state.dataForm.applicationType" clearable placeholder="请选择申报类型">
             <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
@@ -15,8 +21,8 @@
         <!--        <el-input v-model="state.dataForm.unitId" placeholder="推荐单位" clearable></el-input>-->
         <!--      </el-form-item>-->
         <el-form-item>
-          <!--        <el-input style="width: 160px;" v-model="state.dataForm.sGroup" placeholder="学科组" clearable></el-input>-->
-          <el-select style="width: 160px;" v-model="state.dataForm.sGroup" clearable placeholder="请选择学科组">
+          <!--        <el-input style="width: 160px;" v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
+          <el-select style="width: 160px;" v-model="state.dataForm.sgroup" clearable placeholder="请选择学科组">
             <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
@@ -32,26 +38,18 @@
             <el-option v-for="item in recommendTypes" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <!--        <el-input style="width: 160px;" v-model="state.dataForm.honoraryName" placeholder="荣誉名称" clearable></el-input>-->
-          <el-select style="width: 160px;" v-model="state.dataForm.honoraryName" clearable placeholder="请选择荣誉名称">
-            <el-option v-for="item in honorTypes" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-        </el-form-item>
+
         <el-form-item>
           <el-button @click="getSuperiors()">{{ $t("query") }}</el-button>
         </el-form-item>
       </el-form>
       <el-table v-loading="state.dataListLoading" ref="dataUserListRef" :data="state.dataUserForm" border @selection-change="dataListSelectionChange" style="width: 100%">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-        <el-table-column prop="username" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
-        <!--      <el-table-column prop="deptName" :label="$t('user.deptName')" header-align="center" align="center"></el-table-column>-->
-        <el-table-column prop="status" :label="$t('user.status')" sortable="custom" header-align="center" align="center">
-          <template v-slot="scope">
-            <el-tag v-if="scope.row.status === 0" size="small" type="danger">{{ $t("user.status0") }}</el-tag>
-            <el-tag v-else size="small" type="success">{{ $t("user.status1") }}</el-tag>
-          </template>
-        </el-table-column>
+        <el-table-column prop="name" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="honoraryName" label="职称类型" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="applicationName" label="申报类型" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="groupName" label="学科组" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="recommendName" label="推荐类型" header-align="center" align="center"></el-table-column>
       </el-table>
       <template v-slot:footer>
         <el-button @click="superiorAddVisible = false">{{ $t("cancel") }}</el-button>
@@ -73,9 +71,9 @@ const view = reactive({
   dataForm: {
     commentId:"",
     superiors: "",
-    superiorsName:"",
+    superiorsArr:[] as any,
     applicationType: "",
-    sGroup: "",
+    sgroup: "",
     positionId: "",
     recommendType: "",
     honoraryName: "",
@@ -151,7 +149,7 @@ const init = (id: string) => {
 };
 
 const getSuperiors = ()=>{
-  baseService.get("/occupation/participant/excludeParticipants",{ page: state.page , limit: state.limit ,commentId:state.dataForm.commentId}).then(res=>{
+  baseService.get("/occupation/participant/excludeParticipants",{ page: state.page , limit: state.limit ,commentId:state.dataForm.commentId,...{applicationType:state.dataForm.applicationType,sgroup:state.dataForm.sgroup,recommendType:state.dataForm.recommendType,honoraryName:state.dataForm.honoraryName}}).then(res=>{
     console.log(res)
     if(res.code!=0) return false;
     state.dataUserForm = res.data.list;
@@ -160,8 +158,7 @@ const getSuperiors = ()=>{
 const dataListSelectionChange=(val:any)=>{
   console.log(val)
   for (let i = 0; i < val.length; i++) {
-    state.dataForm.superiors = state.dataForm.superiors  + val[i].id + ',';
-    state.dataForm.superiorsName = state.dataForm.superiorsName + val[i].username + '，';
+    state.dataForm.superiorsArr[i] = val[i].id;
   }
 }
 const dataForm = reactive({
@@ -170,10 +167,10 @@ const dataForm = reactive({
   info: "",
   status: 0,
   superiors: "",
-  superiorsName:"",
+  superiorsArr:[],
   indicator: "",
   position: "",
-  sGroup: "",
+  sgroup: "",
   recommendType: "",
   applicationType: "",
   competitiveNum: "",
@@ -194,16 +191,20 @@ const dataForm = reactive({
   reserve02: "",
   reserve03: "",
 });
-// const emit = defineEmits(['getSelectSuperiors'])
+const emit = defineEmits(['getSuperiorsList'])
 const dataFormUserSubmitHandle = ()=> {
-  dataForm.superiors = state.dataForm.superiors
+  dataForm.superiorsArr = state.dataForm.superiorsArr
   dataForm.id = state.dataForm.commentId
-  baseService.post("/occupation/comment", dataForm).then((res) => {
+  console.log(dataForm)
+  baseService.post("/occupation/comment/addParticipant", {commentId:dataForm.id,participants:dataForm.superiorsArr}).then((res) => {
+    console.log(res)
+    if(res.code!=0) return false
     ElMessage.success({
       message: "添加成功",
       duration: 500,
       onClose: () => {
         superiorAddVisible.value = false;
+        emit("getSuperiorsList")
       }
     });
   })

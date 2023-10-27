@@ -1,36 +1,36 @@
 <template>
   <div class="mod-occupation__comment">
     <el-form :inline="true" :model="state.dataForm" @keyup.enter="state.getDataList()">
-      <el-form-item>
+      <el-form-item style="width: 8vw">
         <el-input v-model="state.dataForm.name" placeholder="评议活动名称" clearable></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="width: 8vw">
 <!--        <el-input v-model="state.dataForm.status" placeholder="活动状态" clearable></el-input>-->
-        <el-select v-model="state.dataForm.status" clearable filterable placeholder="请选择活动状态">
+        <el-select v-model="state.dataForm.status" clearable filterable placeholder="活动状态">
           <el-option v-for="item in statusText" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="width: 8vw">
 <!--        <el-input v-model="state.dataForm.position" placeholder="职称" clearable></el-input>-->
-        <el-select v-model="state.dataForm.position" clearable filterable placeholder="请选择职称">
+        <el-select v-model="state.dataForm.position" clearable filterable placeholder="职称等级">
           <el-option v-for="item in positions" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item>
-<!--        <el-input v-model="state.dataForm.sGroup" placeholder="学科组" clearable></el-input>-->
-        <el-select v-model="state.dataForm.sGroup" clearable filterable placeholder="请选择学科">
+      <el-form-item style="width: 8vw">
+<!--        <el-input v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
+        <el-select v-model="state.dataForm.sgroup" clearable filterable placeholder="学科">
           <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="width: 8vw">
 <!--        <el-input v-model="state.dataForm.recommendType" placeholder="推荐类型" clearable></el-input>-->
-        <el-select v-model="state.dataForm.recommendType" clearable filterable placeholder="请选择推荐类型">
+        <el-select v-model="state.dataForm.recommendType" clearable filterable placeholder="推荐类型">
           <el-option v-for="item in recommendTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="width: 8vw">
 <!--        <el-input v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
-        <el-select v-model="state.dataForm.applicationType" clearable filterable placeholder="请选择申报类型">
+        <el-select v-model="state.dataForm.applicationType" clearable filterable placeholder="申报类型">
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
@@ -71,9 +71,10 @@
       <el-table-column prop="statusName" label="活动状态" header-align="center" align="center"></el-table-column>
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
-          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors')" type="primary" link @click="superiorHandle(scope.row.id)">添加被评审人</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="superiorHandle(scope.row.id)">添加被评审人</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:startComment') && scope.row.status != 2" type="primary" link @click="startComment(scope.row.id,scope.row.status)">{{scope.row.status == 0 ? '开始评审':'结束评审'}}</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:update') && scope.row.status == 0" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:delete') && scope.row.status == 0" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -89,6 +90,7 @@ import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import AddOrUpdate from "./comment-add-or-update.vue";
 import Superiors from './superiors.vue'
+import baseService from "@/service/baseService";
 
 const view = reactive({
   getDataListURL: "/occupation/comment/page",
@@ -100,7 +102,7 @@ const view = reactive({
     name: "",
     status: "",
     position: "",
-    sGroup: "",
+    sgroup: "",
     recommendType: "",
     applicationType: "",
   }
@@ -194,5 +196,13 @@ const superiorHandle = (id?: number) => {
     superiorRef.value.init(id);
   });
 };
+
+const startComment = (id:string,status:number)=>{
+  console.log(id,status)
+  baseService.put("/occupation/comment/change",{id:id,status:status}).then(res=>{
+    console.log(res)
+    state.getDataList()
+  })
+}
 
 </script>
