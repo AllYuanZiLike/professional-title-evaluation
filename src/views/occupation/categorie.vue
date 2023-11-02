@@ -1,0 +1,127 @@
+<template>
+  <div class="mod-occupation__categorie">
+    <el-form :inline="true" :model="state.dataForm" @keyup.enter="state.getDataList()">
+      <el-form-item>
+        <el-input v-model="state.dataForm.name" placeholder="类别名称" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="state.getDataList()">{{ $t("query") }}</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button v-if="state.hasPermission('occupation:categorie:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table  @expand-change="loadComments" v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
+      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+      <el-table-column type="expand">
+        <template #default="props">
+          <el-table :data="commentsPage">
+            <el-table-column label="职评活动" prop="name" />
+            <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
+              <template v-slot="scope">
+                <el-button v-if="state.hasPermission('occupation:categorie:deleteComment')" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
+      </el-table-column>
+      <el-table-column prop="name" label="类别名称" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="info" label="类别简介" header-align="center" align="center"></el-table-column>
+<!--      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>-->
+      <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
+        <template v-slot="scope">
+          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.reserve01 =='0'" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.reserve01 !='2'" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+    <!-- 弹窗, 新增 / 修改 -->
+    <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
+    <addCommentCategorie ref="addCommentKey"></addCommentCategorie>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import useView from "@/hooks/useView";
+import { nextTick, reactive, ref, toRefs, watch } from "vue";
+import AddOrUpdate from "./categorie-add-or-update.vue";
+import addCommentCategorie from "./categorie-comment-add.vue"
+import baseService from "@/service/baseService";
+import {ElMessage, ElMessageBox} from "element-plus";
+
+const view = reactive({
+  getDataListURL: "/occupation/categorie/page",
+  getDataListIsPage: true,
+  exportURL: "/occupation/categorie/export",
+  deleteURL: "/occupation/categorie",
+  deleteIsBatch: true,
+  dataForm: {
+    name: "",
+    reserve01:0,//类别状态
+  }
+});
+
+const state = reactive({ ...useView(view), ...toRefs(view) });
+
+const commentsPage = ref([]);
+const loadComments = (row: Comment, expandedRows:Comment) => {
+  console.log(row)
+  console.log(expandedRows)
+  baseService.get("/occupation/categorie/CommentsPage",{id:row.id}).then(res=>{
+    console.log(res)
+    if(res.code!=0) return false
+    commentsPage.value = res.data.list;
+  })
+
+}
+
+const addKey = ref(0);
+const addOrUpdateRef = ref();
+const addOrUpdateHandle = (id?: number) => {
+  addKey.value++;
+  nextTick(() => {
+    addOrUpdateRef.value.init(id);
+  });
+};
+
+const addCommentKey = ref();
+const addComment = (id:string)=>{
+  nextTick(() => {
+    addCommentKey.value.init(id);
+  });
+}
+
+const deleteCommentHandle = (id:string,commentId:string) => {
+  console.log(id,commentId)
+  ElMessageBox.confirm("确定进行删除操作？","提示", {
+    confirmButtonText:"确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(() => {
+    baseService.get("/occupation/categorie/delComment", {id:id,commentId:commentId}).then(res=>{
+      console.log(res)
+      if(res.code!=0) return false;
+      ElMessage.success("删除成功")
+    })
+  })
+
+}
+
+const startCategory = (id:string)=>{
+  console.log(id)
+  baseService.put("/occupation/categorie/change", {id:id}).then(res=>{
+    console.log(res)
+    if(res.code != 0) return false
+    ElMessage.success("启动成功")
+  })
+}
+</script>
