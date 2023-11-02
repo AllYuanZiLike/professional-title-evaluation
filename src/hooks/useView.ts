@@ -164,18 +164,17 @@ const useView = (props: IViewHooksOptions | IObject): IViewHooks => {
           type: "warning"
         })
           .then(() => {
+            console.log(state.dataListSelections)
             baseService
               .delete(
                 `${state.deleteURL}${state.deleteIsBatch ? "" : "/" + id}`,
                 state.deleteIsBatch
                   ? id
                     ? [id]
-                    : state.dataListSelections
-                    ? state.dataListSelections.map(
+                    : state.dataListSelections ? state.dataListSelections.map(
                         (item: IObject) => state.deleteIsBatchKey && item[state.deleteIsBatchKey]
-                      )
+                      ) : {}
                     : {}
-                  : {}
               )
               .then((res) => {
                 ElMessage.success({

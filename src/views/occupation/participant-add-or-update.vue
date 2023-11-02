@@ -179,7 +179,7 @@ const getInitData = ()=> {
 }
 const init = ( id?: number) => {
   visible.value = true;
-  dataForm. id = "";
+  dataForm.id = "";
   // 重置表单数据
   if (dataFormRef.value) {
     dataFormRef.value.resetFields();

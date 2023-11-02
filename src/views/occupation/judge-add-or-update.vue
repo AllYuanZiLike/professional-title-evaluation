@@ -1,35 +1,154 @@
 <template>
-  <el-dialog v-model="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="rules" ref="dataFormRef" @keyup.enter="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item label="评审活动" prop="commentId">
-        <el-input v-model="dataForm.commentId" placeholder="评审活动"></el-input>
-      </el-form-item>
-      <el-form-item label="用户" prop="userId">
-        <el-input v-model="dataForm.userId" placeholder="用户"></el-input>
-      </el-form-item>
-    </el-form>
-    <template v-slot:footer>
-      <el-button @click="visible = false">{{ $t("cancel") }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t("confirm") }}</el-button>
-    </template>
-  </el-dialog>
+  <div class="mod-occupation__participant">
+    <el-dialog v-model="superiorAddVisible" title="添加被评审人" width="70%" center>
+      <el-form :inline="true" :model="state.dataForm" @keyup.enter="getSuperiors()">
+        <el-form-item>
+          <!--        <el-input style="width: 160px;" v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
+          <el-select style="width: 160px;" v-model="state.dataForm.sgroup" clearable placeholder="请选择学科组">
+            <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="getSuperiors()">{{ $t("query") }}</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table v-loading="state.dataListLoading" ref="dataUserListRef" :data="state.dataUserForm" border @selection-change="dataListSelectionChange" style="width: 100%">
+        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <el-table-column prop="username" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="deptName" label="学科组" header-align="center" align="center"></el-table-column>
+      </el-table>
+      <template v-slot:footer>
+        <el-button @click="superiorAddVisible = false">{{ $t("cancel") }}</el-button>
+        <el-button type="primary" @click="dataFormUserSubmitHandle()">{{ $t("confirm") }}</el-button>
+      </template>
+      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+    </el-dialog>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import useView from "@/hooks/useView";
+import { nextTick, reactive, ref, toRefs, watch } from "vue";
+import AddOrUpdate from "./participant-add-or-update.vue";
 import baseService from "@/service/baseService";
-import { useI18n } from "vue-i18n";
-import { ElMessage } from "element-plus";
-const { t } = useI18n();
-const emit = defineEmits(["refreshDataList"]);
+import {ElMessage} from "element-plus";
 
-const visible = ref(false);
-const dataFormRef = ref();
+const view = reactive({
+  dataForm: {
+    commentId:"",
+    superiors: "",
+    judgeArr:[] as any,
+    applicationType: "",
+    sgroup: "",
+    positionId: "",
+    recommendType: "",
+    honoraryName: "",
+  },
+  addUserVisible:false,
+  total:0,
+  page:1,
+  limit:10,
+  dataUserForm: [],
+});
 
+const state = reactive({ ...useView(view), ...toRefs(view) });
+
+const superiorAddVisible = ref(false)
+
+const applicationTypes = reactive([
+  {
+    value:0,
+    label:"教学为主"
+  },
+  {
+    value:1,
+    label:"教学科研"
+  },
+  {
+    value:2,
+    label:"其他（实验人员）"
+  },
+])
+const groups = reactive([
+  {
+    value:0,
+    label:"自然科学"
+  },
+  {
+    value:1,
+    label:"人文社科"
+  },
+  {
+    value:2,
+    label:"农科"
+  },
+])
+const recommendTypes = reactive([
+  {
+    value:0,
+    label:'直推'
+  },
+  {
+    value:1,
+    label:'竞争'
+  },
+])
+const honorTypes = reactive([
+  {
+    value:0,
+    label:'正高'
+  },
+  {
+    value:1,
+    label:'副高'
+  },
+  {
+    value:2,
+    label:'中级'
+  },
+])
+
+const init = (id: string) => {
+  superiorAddVisible.value = true;
+  state.dataForm.commentId = id;
+  getSuperiors();
+};
+
+const getSuperiors = ()=>{
+  baseService.get("/occupation/judge/judgeNotPage",{ page: state.page , limit: state.limit ,commentId:state.dataForm.commentId,...{applicationType:state.dataForm.applicationType,sgroup:state.dataForm.sgroup,recommendType:state.dataForm.recommendType,honoraryName:state.dataForm.honoraryName}}).then(res=>{
+    console.log(res)
+    if(res.code!=0) return false;
+    state.dataUserForm = res.data.list;
+  })
+}
+const dataListSelectionChange=(val:any)=>{
+  console.log(val)
+  for (let i = 0; i < val.length; i++) {
+    state.dataForm.judgeArr[i] = val[i].id;
+  }
+}
 const dataForm = reactive({
   id: "",
-  commentId: "",
-  userId: "",
+  name: "",
+  info: "",
+  status: 0,
+  superiors: "",
+  judgeArr:[],
+  indicator: "",
+  position: "",
+  sgroup: "",
+  recommendType: "",
+  applicationType: "",
+  competitiveNum: "",
+  competitiveIndicator: "",
+  participantNum: "",
+  residualIndicator: "",
+  stage: "",
+  link: "",
+  indicatorType: "",
+  startTime: "",
+  endTime: "",
+  delFlag: "",
   creator: "",
   createDate: "",
   updater: "",
@@ -38,51 +157,27 @@ const dataForm = reactive({
   reserve02: "",
   reserve03: "",
 });
-
-const rules = ref({
-});
-
-const init = (id?: number) => {
-  visible.value = true;
-  dataForm.id = "";
-
-  // 重置表单数据
-  if (dataFormRef.value) {
-    dataFormRef.value.resetFields();
-  }
-
-  if (id) {
-    getInfo(id);
-  }
-};
-
-// 获取信息
-const getInfo = (id: number) => {
-  baseService.get("/occupation/judge/" + id).then((res) => {
-    Object.assign(dataForm, res.data);
-  });
-};
-
-// 表单提交
-const dataFormSubmitHandle = () => {
-  dataFormRef.value.validate((valid: boolean) => {
-    if (!valid) {
-      return false;
-    }
-    (!dataForm.id ? baseService.post : baseService.put)("/occupation/judge", dataForm).then((res) => {
-      ElMessage.success({
-        message: t("prompt.success"),
-        duration: 500,
-        onClose: () => {
-          visible.value = false;
-          emit("refreshDataList");
-        }
-      });
+const emit = defineEmits(['getSuperiorsList'])
+const dataFormUserSubmitHandle = ()=> {
+  dataForm.judgeArr = state.dataForm.judgeArr
+  dataForm.id = state.dataForm.commentId
+  console.log(dataForm)
+  baseService.post("/occupation/comment/addJudge", {commentId:dataForm.id,participants:dataForm.judgeArr}).then((res) => {
+    console.log(res)
+    if(res.code!=0) return false
+    ElMessage.success({
+      message: "添加成功",
+      duration: 500,
+      onClose: () => {
+        superiorAddVisible.value = false;
+        emit("getSuperiorsList")
+      }
     });
-  });
-};
+  })
+}
 
 defineExpose({
   init
-});
+})
+
 </script>

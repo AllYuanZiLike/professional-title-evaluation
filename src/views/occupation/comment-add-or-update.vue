@@ -22,8 +22,8 @@
       </el-form-item>
       <el-form-item label="是否是附加轮" prop="isAdditional">
         <el-radio-group v-model="dataForm.isAdditional">
-          <el-radio label="0">否</el-radio>
           <el-radio label="1">是</el-radio>
+          <el-radio label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -39,7 +39,7 @@
           <el-option v-for="item in overdResId" :key="item.id" :label="item.name" :value="item.id"/>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="dataForm.link == 0" label="指标数" prop="indicator">
+      <el-form-item label="指标数" prop="indicator">
         <el-input v-model="dataForm.indicator" placeholder="指标数"></el-input>
       </el-form-item>
       <el-form-item label="评审职称等级" prop="position">
@@ -69,8 +69,8 @@
       <el-form-item v-if="dataForm.link == 0" label="选取人数" prop="participantNum">
         <el-input v-model="dataForm.participantNum" placeholder="选取人数"></el-input>
       </el-form-item>
-<!--      <el-form-item label="剩余指标数" prop="residualIndicator">-->
-<!--        <el-input v-model="dataForm.residualIndicator" placeholder="剩余指标数"></el-input>-->
+<!--      <el-form-item label="指标数" prop="indicator">-->
+<!--        <el-input v-model="dataForm.indicator" placeholder="指标数"></el-input>-->
 <!--      </el-form-item>-->
 
     </el-form>

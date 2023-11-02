@@ -32,7 +32,10 @@
           <el-button v-if="state.hasPermission('occupation:comment:save')" type="primary" @click="superiorAddHandle(state.commentId)">{{ $t("add") }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="delSuperior()">{{ $t("deleteBatch") }}</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="getParticipants">刷新</el-button>
         </el-form-item>
       </el-form>
       <el-table v-loading="state.dataListLoading" :data="participants" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
@@ -44,7 +47,7 @@
         <el-table-column prop="recommendName" label="推荐类型" header-align="center" align="center"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template v-slot="scope">
-            <el-button v-if="state.hasPermission('occupation:comment:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
+            <el-button v-if="state.hasPermission('occupation:comment:delete')" type="primary" link @click="delSuperior(scope.row.id)">{{ $t("delete") }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -58,10 +61,14 @@
 <script lang="ts" setup>
 import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
-import SuperiorAdd from "./superiors-add.vue";
+import SuperiorAdd from "./add-superiors.vue";
 import baseService from "@/service/baseService";
+import {IObject} from "@/types/interface";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const view = reactive({
+  deleteIsBatchKey: "id",
+  deleteIsBatch: true,
   commentId:"",
   page:1,
   limit:10,
@@ -163,6 +170,31 @@ const getParticipants = ()=>{
     if(res.code != 0) return false
     participants.value = res.data.list;
   })
+}
+
+const delSuperiorIds = ref<Array<string>>([])
+const delSuperior = (id? :string) => {
+  delSuperiorIds.value = [];
+    if(state.dataListSelections){
+      state.dataListSelections.map((item: IObject) => {
+        delSuperiorIds.value.push(item.id)
+      })
+  }
+  if(id) delSuperiorIds.value.push(id)
+  console.log(delSuperiorIds.value)
+  console.log(state.commentId)
+  ElMessageBox.confirm("确定进行删除操作？","提示", {
+    confirmButtonText:"确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(() => {
+      baseService.post("/occupation/comment/delParticipant",{ids:delSuperiorIds.value,commentId:state.commentId}).then(res=>{
+        console.log(res)
+        if(res.code != 0) return false
+        ElMessage.success("删除成功")
+        getParticipants()
+      })
+    })
 }
 const superiorAddRef = ref();
 const superiorAddHandle = (id: string) => {

@@ -72,6 +72,7 @@
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
           <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="superiorHandle(scope.row.id)">添加被评审人</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="judgeHandle(scope.row.id)">添加评委</el-button>
           <el-button v-if="state.hasPermission('occupation:comment:startComment') && scope.row.status != 2" type="primary" link @click="startComment(scope.row.id,scope.row.status)">{{scope.row.status == 0 ? '开始评审':'结束评审'}}</el-button>
           <el-button v-if="state.hasPermission('occupation:comment:update') && scope.row.status == 0" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
           <el-button v-if="state.hasPermission('occupation:comment:delete') && scope.row.status == 0" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
@@ -82,6 +83,7 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
     <Superiors ref="superiorRef"></Superiors>
+    <Judge ref="judgeRef"></Judge>
   </div>
 </template>
 
@@ -89,7 +91,8 @@
 import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import AddOrUpdate from "./comment-add-or-update.vue";
-import Superiors from './superiors.vue'
+import Superiors from './superior.vue'
+import Judge from './judge.vue'
 import baseService from "@/service/baseService";
 
 const view = reactive({
@@ -194,6 +197,13 @@ const superiorRef = ref();
 const superiorHandle = (id?: number) => {
   nextTick(() => {
     superiorRef.value.init(id);
+  });
+};
+
+const judgeRef = ref();
+const judgeHandle = (id?: number) => {
+  nextTick(() => {
+    judgeRef.value.init(id);
   });
 };
 
