@@ -4,6 +4,12 @@
       <el-form-item label="参与人姓名" prop="name">
         <el-input v-model="dataForm.name" placeholder="参与人姓名"></el-input>
       </el-form-item>
+      <el-form-item label="性别" prop="sex">
+        <el-radio-group v-model="dataForm.sex">
+          <el-radio label="1">男</el-radio>
+          <el-radio label="0">女</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="申报类型" prop="applicationType">
 <!--        <el-input v-model="dataForm.applicationType" placeholder="申报类型"></el-input>-->
         <el-select v-model="dataForm.applicationType" placeholder="请选择申报类型">
@@ -146,6 +152,7 @@ const honorTypes = reactive([
 ])
 const rules = ref({
   name: [{ required: true, message: t("validate.required"), trigger: "blur" }],
+  sex: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   applicationType: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   unitId: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   sgroup: [{ required: true, message: t("validate.required"), trigger: "blur" }],

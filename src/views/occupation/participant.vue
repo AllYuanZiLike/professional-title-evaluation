@@ -53,6 +53,7 @@
     <el-table v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
       <el-table-column prop="name" label="参与人姓名" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="sexName" label="性别" header-align="center" align="center"></el-table-column>
       <el-table-column prop="applicationName" label="申报类型" header-align="center" align="center"></el-table-column>
       <el-table-column prop="unitName" label="推荐单位" header-align="center" align="center"></el-table-column>
       <el-table-column prop="groupName" label="学科组" header-align="center" align="center"></el-table-column>
@@ -99,6 +100,7 @@ const view = reactive({
   deleteIsBatch: true,
   dataForm: {
     name: "",
+    sex:0,
     applicationType: "",
     unitId: "",
     sGroup: "",

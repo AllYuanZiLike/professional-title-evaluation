@@ -31,8 +31,8 @@
 <!--        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>-->
         <el-table-column prop="commentName" label="评审活动" header-align="center" align="center"></el-table-column>
         <el-table-column prop="participantName" label="参与人" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="result" label="推荐意见（结果）" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="count" label="时间" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="opinionName" label="推荐意见" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="updateDate" label="时间" header-align="center" align="center"></el-table-column>
       </el-table>
 <!--      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>-->
     </el-dialog>
@@ -43,11 +43,12 @@
 import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import baseService from "@/service/baseService";
+import dayjs from "dayjs";
 
 const view = reactive({
   getDataListURL: "/occupation/result/page",
   getDataListIsPage: true,
-  exportURL: "/occupation/result/export",
+  exportURL: "/occupation/count/export",
   deleteURL: "/occupation/result",
   deleteIsBatch: true,
   commentId:"",
@@ -62,7 +63,7 @@ const view = reactive({
 
 const state = reactive({ ...useView(view), ...toRefs(view) });
 const drawerResult = ref(false);
-const resultList = ref([]);
+const resultList = ref([{updateDate:'' as any}]);
 const resultText = ref([
   {value:0,label:"通过"},
   {value:1,label:"不通过"},
@@ -82,6 +83,10 @@ const getDetailsList = ()=>{
     console.log(res)
     if(res.code != 0) return false
     resultList.value = res.data.list;
+    resultList.value.map(item=>{
+      console.log(item.updateDate)
+      item.updateDate = dayjs(item.updateDate,"YYYY-MM-DD HH:mm:ss")
+    })
   })
 }
 
