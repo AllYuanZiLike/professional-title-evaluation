@@ -22,10 +22,17 @@
       <el-table-column type="expand">
         <template #default="props">
           <el-table :data="commentsPage">
-            <el-table-column label="职评活动" prop="name" />
+            <el-table-column header-align="center" align="center" label="职评活动" prop="name" />
+            <el-table-column header-align="center" align="center" label="评审进度">
+              <template v-slot="scope">
+                <el-progress :percentage="Math.floor((scope.row.voted)/(scope.row.judgeNumber)*100)" />
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
               <template v-slot="scope">
-                <el-button v-if="state.hasPermission('occupation:categorie:deleteComment')" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:deleteComment') && scope.row.status == 0" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -36,8 +43,8 @@
 <!--      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>-->
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
-          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.reserve01 =='0'" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
-          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.reserve01 !='2'" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status =='0'" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !='2'" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
         </template>
@@ -46,7 +53,8 @@
     <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
-    <addCommentCategorie ref="addCommentKey"></addCommentCategorie>
+    <addCommentCategory ref="addCommentKey"></addCommentCategory>
+    <CheckResult ref="checkResultKey"></CheckResult>
   </div>
 </template>
 
@@ -54,9 +62,11 @@
 import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import AddOrUpdate from "./categorie-add-or-update.vue";
-import addCommentCategorie from "./categorie-comment-add.vue"
+import addCommentCategory from "./categorie-comment-add.vue"
+import CheckResult from "./result.vue"
 import baseService from "@/service/baseService";
 import {ElMessage, ElMessageBox} from "element-plus";
+import Template from "@/views/devtools/template.vue";
 
 const view = reactive({
   getDataListURL: "/occupation/categorie/page",
@@ -66,7 +76,7 @@ const view = reactive({
   deleteIsBatch: true,
   dataForm: {
     name: "",
-    reserve01:0,//类别状态
+    status:0,//类别状态
   }
 });
 
@@ -100,6 +110,14 @@ const addComment = (id:string)=>{
   });
 }
 
+
+const checkResultKey = ref();
+const checkResultHandle = (id:string,commentId:string)=>{
+  nextTick(() => {
+    checkResultKey.value.init(id,commentId);
+  });
+}
+
 const deleteCommentHandle = (id:string,commentId:string) => {
   console.log(id,commentId)
   ElMessageBox.confirm("确定进行删除操作？","提示", {
@@ -123,5 +141,9 @@ const startCategory = (id:string)=>{
     if(res.code != 0) return false
     ElMessage.success("启动成功")
   })
+}
+
+const confirmResHandle = (categoryId:string,commentId:string)=>{
+  console.log(categoryId,commentId)
 }
 </script>

@@ -2,9 +2,9 @@ export default {
   ui: {
     app: {
       //产品信息
-      name: "Renren",
-      productName: "Renren Cloud",
-      productNameMini: "RR",
+      name: "Spark",
+      productName: "Spark Cloud",
+      productNameMini: "Spark",
       copyright: "renren.io"
     },
     setting: {

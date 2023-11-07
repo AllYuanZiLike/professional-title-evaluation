@@ -2,9 +2,9 @@ export default {
   ui: {
     app: {
       //产品信息
-      name: "人人开源",
-      productName: "人人微服务平台",
-      productNameMini: "人人",
+      name: "星火",
+      productName: "星火服务平台",
+      productNameMini: "星火",
       copyright: "renren.io"
     },
     setting: {
