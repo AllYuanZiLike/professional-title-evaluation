@@ -1,30 +1,30 @@
 <template>
   <div class="mod-occupation__comment">
+    <el-drawer v-model="drawerHistory"  title="历史职评活动" direction="rtl" size="85%">
     <el-form :inline="true" :model="state.dataForm" @keyup.enter="state.getDataList()">
       <el-form-item style="width: 8vw">
         <el-input v-model="state.dataForm.name" placeholder="评议活动名称" clearable></el-input>
       </el-form-item>
-
       <el-form-item style="width: 8vw">
-<!--        <el-input v-model="state.dataForm.position" placeholder="职称" clearable></el-input>-->
+        <!--        <el-input v-model="state.dataForm.position" placeholder="职称" clearable></el-input>-->
         <el-select v-model="state.dataForm.position" clearable filterable placeholder="职称等级">
           <el-option v-for="item in positions" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item style="width: 8vw">
-<!--        <el-input v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
+        <!--        <el-input v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
         <el-select v-model="state.dataForm.sgroup" clearable filterable placeholder="学科">
           <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item style="width: 8vw">
-<!--        <el-input v-model="state.dataForm.recommendType" placeholder="推荐类型" clearable></el-input>-->
+        <!--        <el-input v-model="state.dataForm.recommendType" placeholder="推荐类型" clearable></el-input>-->
         <el-select v-model="state.dataForm.recommendType" clearable filterable placeholder="推荐类型">
           <el-option v-for="item in recommendTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item style="width: 8vw">
-<!--        <el-input v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
+        <!--        <el-input v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
         <el-select v-model="state.dataForm.applicationType" clearable filterable placeholder="申报类型">
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
@@ -35,15 +35,9 @@
       <el-form-item>
         <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('occupation:comment:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('occupation:comment:history')" type="info" @click="checkHistory">历史</el-button>
-      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>-->
+<!--      </el-form-item>-->
     </el-form>
     <el-table v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
@@ -53,36 +47,36 @@
           <p v-html="scope.row.info"></p>
         </template>
       </el-table-column>
-<!--      <el-table-column prop="superiors" label="上级评审ids" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="superiors" label="上级评审ids" header-align="center" align="center"></el-table-column>-->
       <el-table-column prop="indicator" label="指标数" header-align="center" align="center"></el-table-column>
       <el-table-column prop="positionName" label="评审职称等级" header-align="center" align="center"></el-table-column>
       <el-table-column prop="groupName" label="学科组" header-align="center" align="center"></el-table-column>
       <el-table-column prop="recommendName" label="推荐类型" header-align="center" align="center"></el-table-column>
       <el-table-column prop="applicationName" label="申报类型" header-align="center" align="center"></el-table-column>
-<!--      <el-table-column prop="competitiveNum" label="竞争性参评人数（竞争型总人数）" header-align="center" align="center"></el-table-column>-->
-<!--      <el-table-column prop="competitiveIndicator" label="竞争性指标数" header-align="center" align="center"></el-table-column>-->
-<!--      <el-table-column prop="participantNum" label="选取人数（参与人数）" header-align="center" align="center"></el-table-column>-->
-<!--      <el-table-column prop="residualIndicator" label="剩余指标数" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="competitiveNum" label="竞争性参评人数（竞争型总人数）" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="competitiveIndicator" label="竞争性指标数" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="participantNum" label="选取人数（参与人数）" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="residualIndicator" label="剩余指标数" header-align="center" align="center"></el-table-column>-->
       <el-table-column prop="link" label="第几环节" header-align="center" align="center"></el-table-column>
       <el-table-column prop="stage" label="第几阶段" header-align="center" align="center"></el-table-column>
-<!--      <el-table-column prop="indicatorType" label="指标数类型（+1/等额）" header-align="center" align="center"></el-table-column>-->
+      <!--      <el-table-column prop="indicatorType" label="指标数类型（+1/等额）" header-align="center" align="center"></el-table-column>-->
       <el-table-column prop="statusName" label="活动状态" header-align="center" align="center"></el-table-column>
-      <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
-        <template v-slot="scope">
-          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="superiorHandle(scope.row.id)">添加被评审人</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="judgeHandle(scope.row.id)">添加评委</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:startComment') && scope.row.status != 2" type="primary" link @click="startComment(scope.row.id,scope.row.status)">{{scope.row.status == 0 ? '开始评审':'结束评审'}}</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:update') && scope.row.status == 0" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
-          <el-button v-if="state.hasPermission('occupation:comment:delete') && scope.row.status == 0" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">-->
+<!--        <template v-slot="scope">-->
+<!--          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="superiorHandle(scope.row.id)">添加被评审人</el-button>-->
+<!--          <el-button v-if="state.hasPermission('occupation:comment:addSuperiors') && scope.row.status == 0" type="primary" link @click="judgeHandle(scope.row.id)">添加评委</el-button>-->
+<!--          <el-button v-if="state.hasPermission('occupation:comment:startComment') && scope.row.status != 2" type="primary" link @click="startComment(scope.row.id,scope.row.status)">{{scope.row.status == 0 ? '开始评审':'结束评审'}}</el-button>-->
+<!--          <el-button v-if="state.hasPermission('occupation:comment:update') && scope.row.status == 0" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>-->
+<!--          <el-button v-if="state.hasPermission('occupation:comment:delete') && scope.row.status == 0" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
     <Superiors ref="superiorRef"></Superiors>
     <Judge ref="judgeRef"></Judge>
-    <History ref="historyRef"></History>
+    </el-drawer>
   </div>
 </template>
 
@@ -92,7 +86,6 @@ import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import AddOrUpdate from "./comment-add-or-update.vue";
 import Superiors from './superior.vue'
 import Judge from './judge.vue'
-import History from './historyComment.vue'
 import baseService from "@/service/baseService";
 
 const view = reactive({
@@ -103,7 +96,7 @@ const view = reactive({
   deleteIsBatch: true,
   dataForm: {
     name: "",
-    status: "",
+    status: 2,
     position: "",
     sgroup: "",
     recommendType: "",
@@ -112,6 +105,7 @@ const view = reactive({
 });
 
 const state = reactive({ ...useView(view), ...toRefs(view) });
+const drawerHistory= ref(false);
 
 const statusText = reactive([
   {
@@ -184,13 +178,9 @@ const positions = reactive([
 
 ])
 
-const addKey = ref(0);
-const addOrUpdateRef = ref();
-const addOrUpdateHandle = (id?: number) => {
-  addKey.value++;
-  nextTick(() => {
-    addOrUpdateRef.value.init(id);
-  });
+const init = () => {
+  drawerHistory.value = true;
+  state.getDataList()
 };
 
 const superiorRef = ref();
@@ -207,19 +197,7 @@ const judgeHandle = (id?: number) => {
   });
 };
 
-const historyRef = ref();
-const checkHistory = ()=>{
-  nextTick(() => {
-    historyRef.value.init();
-  });
-}
-
-const startComment = (id:string,status:number)=>{
-  console.log(id,status)
-  baseService.put("/occupation/comment/change",{id:id,status:status}).then(res=>{
-    console.log(res)
-    state.getDataList()
-  })
-}
-
+defineExpose({
+  init
+})
 </script>

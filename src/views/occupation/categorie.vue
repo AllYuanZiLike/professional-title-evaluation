@@ -16,6 +16,9 @@
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button v-if="state.hasPermission('occupation:categorie:history')" type="info" @click="checkHistory">历史</el-button>
+      </el-form-item>
     </el-form>
     <el-table  @expand-change="loadComments" v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
@@ -30,9 +33,9 @@
             </el-table-column>
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
               <template v-slot="scope">
-                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>
+<!--                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>-->
                 <el-button v-if="state.hasPermission('occupation:categorie:deleteComment') && scope.row.status == 0" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
-                <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.isPass)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -43,8 +46,8 @@
 <!--      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>-->
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
-          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status =='0'" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
-          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !='2'" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status == 0" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !=2" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
         </template>
@@ -55,6 +58,7 @@
     <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
     <addCommentCategory ref="addCommentKey"></addCommentCategory>
     <CheckResult ref="checkResultKey"></CheckResult>
+    <History ref="historyRef"></History>
   </div>
 </template>
 
@@ -64,6 +68,7 @@ import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import AddOrUpdate from "./categorie-add-or-update.vue";
 import addCommentCategory from "./categorie-comment-add.vue"
 import CheckResult from "./result.vue"
+import History from './historyCategory.vue'
 import baseService from "@/service/baseService";
 import {ElMessage, ElMessageBox} from "element-plus";
 import Template from "@/views/devtools/template.vue";
@@ -134,12 +139,20 @@ const deleteCommentHandle = (id:string,commentId:string) => {
 
 }
 
+const historyRef = ref();
+const checkHistory = ()=>{
+  nextTick(() => {
+    historyRef.value.init();
+  });
+}
+
 const startCategory = (id:string)=>{
   console.log(id)
   baseService.put("/occupation/categorie/change", {id:id}).then(res=>{
     console.log(res)
     if(res.code != 0) return false
     ElMessage.success("启动成功")
+    state.getDataList()
   })
 }
 
