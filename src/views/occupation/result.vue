@@ -8,12 +8,12 @@
 <!--        <el-form-item>-->
 <!--          <el-input v-model="state.dataForm.participantId" placeholder="参与人" clearable></el-input>-->
 <!--        </el-form-item>-->
-        <el-form-item>
-<!--          <el-input v-model="state.dataForm.result" placeholder="推荐意见（结果）" clearable></el-input>-->
-          <el-select v-model="state.dataForm.result" placeholder="推荐意见（结果）">
-            <el-option v-for="item in resultText" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-        </el-form-item>
+<!--        <el-form-item>-->
+<!--&lt;!&ndash;          <el-input v-model="state.dataForm.result" placeholder="推荐意见（结果）" clearable></el-input>&ndash;&gt;-->
+<!--          <el-select v-model="state.dataForm.result" placeholder="推荐意见（结果）">-->
+<!--            <el-option v-for="item in resultText" :key="item.value" :label="item.label" :value="item.value"/>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
         <el-form-item>
           <el-input v-model="state.dataForm.count" placeholder="得票数" clearable></el-input>
         </el-form-item>
@@ -34,7 +34,7 @@
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="commentName" label="评审活动" header-align="center" align="center"></el-table-column>
         <el-table-column prop="participantName" label="参与人" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="result" label="推荐意见（结果）" header-align="center" align="center"></el-table-column>
+<!--        <el-table-column prop="result" label="推荐意见（结果）" header-align="center" align="center"></el-table-column>-->
         <el-table-column prop="count" label="得票数" header-align="center" align="center"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template v-slot="scope">

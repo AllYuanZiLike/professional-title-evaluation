@@ -1,6 +1,6 @@
 <template>
   <div class="mod-occupation__result">
-    <el-dialog v-model="drawerResult"  title="详细" width="60%">
+    <el-dialog v-model="drawerResult"  title="详细" width="80%">
       <el-form :inline="true" :model="state.dataForm" @keyup.enter="getDetailsList">
         <!--        <el-form-item>-->
         <!--          <el-input v-model="state.dataForm.commentId" placeholder="评审活动" clearable></el-input>-->
@@ -30,8 +30,9 @@
       <el-table v-loading="state.dataListLoading" :data="resultList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
 <!--        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>-->
         <el-table-column prop="commentName" label="评审活动" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="participantName" label="参与人" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="participantName" label="候选人" header-align="center" align="center"></el-table-column>
         <el-table-column prop="opinionName" label="推荐意见" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="judgeName" label="评委" header-align="center" align="center"></el-table-column>
         <el-table-column prop="updateDate" label="时间" header-align="center" align="center"></el-table-column>
       </el-table>
 <!--      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>-->
@@ -70,12 +71,12 @@ const resultText = ref([
 ])
 
 const init = (id: string,commentId:string,participantId:string) => {
-  drawerResult.value = true;
   state.commentId = commentId;
   state.dataForm.commentId = commentId
   state.dataForm.participantId = participantId
   state.categoryId = id
   getDetailsList()
+  drawerResult.value = true;
 };
 
 const getDetailsList = ()=>{
@@ -84,8 +85,9 @@ const getDetailsList = ()=>{
     if(res.code != 0) return false
     resultList.value = res.data.list;
     resultList.value.map(item=>{
+      let a = dayjs(item.updateDate)
+      item.updateDate = a.format('YYYY年MM月DD日 HH:mm:ss')
       console.log(item.updateDate)
-      item.updateDate = dayjs(item.updateDate,"YYYY-MM-DD HH:mm:ss")
     })
   })
 }
