@@ -1,11 +1,11 @@
 <template>
   <el-dialog v-model="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" @keyup.enter="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item label="学院编号" prop="name">
-        <el-input v-model="dataForm.code" placeholder="推荐单位名称"></el-input>
-      </el-form-item>
       <el-form-item label="推荐单位名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="推荐单位名称"></el-input>
+      </el-form-item>
+      <el-form-item label="学院编号" prop="name">
+        <el-input v-model="dataForm.code" placeholder="学院编号"></el-input>
       </el-form-item>
       <el-form-item label="批编" prop="ranks">
         <el-input v-model="dataForm.ranks" placeholder="批编"></el-input>

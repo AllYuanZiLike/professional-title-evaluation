@@ -7,9 +7,9 @@
       <el-form-item>
         <el-button @click="state.getDataList()">{{ $t("query") }}</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>
-      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:categorie:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
       </el-form-item>
@@ -20,11 +20,12 @@
         <el-button v-if="state.hasPermission('occupation:categorie:history')" type="info" @click="checkHistory">历史</el-button>
       </el-form-item>
     </el-form>
-    <el-table  @expand-change="loadComments" v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
+<!--    -->
+    <el-table @expand-change="loadComments" v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
       <el-table-column type="expand">
         <template #default="props">
-          <el-table :data="commentsPage">
+          <el-table v-loading="loading" :data="commentsPage" :row-class-name="commentTableClassName">
             <el-table-column header-align="center" align="center" label="职评活动" prop="name" />
             <el-table-column header-align="center" align="center" label="评审进度">
               <template v-slot="scope">
@@ -47,7 +48,7 @@
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
           <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status == 0" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
-          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !=2" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.reserve01=='0'?'开启':'结束'}}类别</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !=2" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.status=='0'?'开启':'结束'}}类别</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
         </template>
@@ -81,23 +82,41 @@ const view = reactive({
   deleteIsBatch: true,
   dataForm: {
     name: "",
-    status:0,//类别状态
-  }
+    status:"",//类别状态
+  },
+  dataList:[{commentsPage:[] as any}]
 });
 
 const state = reactive({ ...useView(view), ...toRefs(view) });
 
+// interface Comment {
+//   name:string
+//   id:string
+//   isOver:number
+//   judgeNumber:number
+//   participantNum:number
+//   status:number
+//   voted:number
+// }
+interface Categoty {
+  commentIds: Array<any>
+  commentsPage: Array<any>
+}
+
+const loading = ref(false)
 const commentsPage = ref([]);
-const loadComments = (row: Comment, expandedRows:Comment) => {
+const loadComments = (row: Categoty, expandedRows:any,isExpanded:boolean) => {
   console.log(row)
   console.log(expandedRows)
+  console.log(isExpanded)
   baseService.get("/occupation/categorie/CommentsPage",{id:row.id}).then(res=>{
     console.log(res)
-    if(res.code!=0) return false
+    if(res.code!=0) return false;
     commentsPage.value = res.data.list;
   })
 
 }
+
 
 const addKey = ref(0);
 const addOrUpdateRef = ref();
@@ -159,4 +178,13 @@ const startCategory = (id:string)=>{
 const confirmResHandle = (categoryId:string,commentId:string)=>{
   console.log(categoryId,commentId)
 }
+
+const commentTableClassName = ({row, rowIndex,}: { row: Comment,rowIndex: number })=>{
+  if(row.status == 2) return 'overRow';
+}
 </script>
+<style lang="less">
+.el-table .overRow{
+  --el-table-tr-bg-color: #dbecfc;
+}
+</style>

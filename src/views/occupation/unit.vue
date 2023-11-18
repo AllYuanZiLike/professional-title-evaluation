@@ -19,8 +19,8 @@
     </el-form>
     <el-table v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="code" label="学院编号" header-align="center" align="center"></el-table-column>
       <el-table-column prop="name" label="推荐单位名称" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="code" label="学院编号" header-align="center" align="center"></el-table-column>
       <el-table-column prop="ranks" label="批编" header-align="center" align="center"></el-table-column>
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">

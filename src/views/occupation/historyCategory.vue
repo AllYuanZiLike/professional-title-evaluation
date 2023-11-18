@@ -64,6 +64,7 @@ const state = reactive({ ...useView(view), ...toRefs(view) });
 const drawerHistory = ref(false)
 const init = () => {
   drawerHistory.value = true;
+  state.getDataList();
 };
 
 const commentsPage = ref([]);

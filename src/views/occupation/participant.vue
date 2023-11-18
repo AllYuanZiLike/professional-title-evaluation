@@ -6,7 +6,7 @@
 <!--      </el-form-item>-->
       <el-form-item  style="width: 8vw;">
 <!--        <el-input style="width: 160px;" v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
-        <el-select style="width: 160px;" v-model="state.dataForm.applicationType" clearable placeholder="请选择申报类型">
+        <el-select style="width: 160px;" v-model="state.dataForm.applicationType" clearable placeholder="申报类型">
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
@@ -15,7 +15,7 @@
 <!--      </el-form-item>-->
       <el-form-item style="width: 8vw;">
 <!--        <el-input style="width: 160px;" v-model="state.dataForm.sGroup" placeholder="学科组" clearable></el-input>-->
-        <el-select style="width: 160px;" v-model="state.dataForm.sGroup" clearable placeholder="请选择申报类型">
+        <el-select style="width: 160px;" v-model="state.dataForm.sGroup" clearable placeholder="学科组">
           <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
@@ -27,14 +27,20 @@
 <!--      </el-form-item>-->
       <el-form-item style="width: 8vw;">
 <!--        <el-input style="width: 160px;" v-model="state.dataForm.recommendType" placeholder="推荐类型" clearable></el-input>-->
-        <el-select style="width: 160px;" v-model="state.dataForm.recommendType" clearable placeholder="请选择申报类型">
+        <el-select style="width: 160px;" v-model="state.dataForm.recommendType" clearable placeholder="推荐类型">
           <el-option v-for="item in recommendTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item style="width: 8vw;">
 <!--        <el-input style="width: 160px;" v-model="state.dataForm.honoraryName" placeholder="荣誉名称" clearable></el-input>-->
-        <el-select style="width: 160px;" v-model="state.dataForm.honoraryName" clearable placeholder="请选择申报类型">
+        <el-select style="width: 160px;" v-model="state.dataForm.honoraryName" clearable placeholder="荣誉名称">
           <el-option v-for="item in honorTypes" :key="item.value" :label="item.label" :value="item.value"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item style="width: 8vw;">
+        <!--        <el-input style="width: 160px;" v-model="state.dataForm.honoraryName" placeholder="荣誉名称" clearable></el-input>-->
+        <el-select style="width: 160px;" v-model="state.dataForm.isPass" clearable placeholder="是否通过">
+          <el-option v-for="item in passTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -104,6 +110,7 @@ const view = reactive({
     applicationType: "",
     unitId: "",
     sGroup: "",
+    isPass:"",
     professionalId: "",
     positionId: "",
     recommendType: "",
@@ -164,6 +171,16 @@ const honorTypes = reactive([
     value:2,
     label:'中级'
   },
+])
+const passTypes = reactive([
+  {
+    value:0,
+    label:'未通过'
+  },
+  {
+    value:1,
+    label:'通过'
+  }
 ])
 
 const addKey = ref(0);
