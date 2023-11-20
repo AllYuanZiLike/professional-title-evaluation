@@ -47,17 +47,17 @@
 <!--      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>-->
       <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
-          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status == 0" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:addComment') && scope.row.status != 2" type="primary" link @click="addComment(scope.row.id)">添加职评活动</el-button>
           <el-button v-if="state.hasPermission('occupation:categorie:startCategory') && scope.row.status !=2" type="primary" link @click="startCategory(scope.row.id)">{{scope.row.status=='0'?'开启':'结束'}}类别</el-button>
-          <el-button v-if="state.hasPermission('occupation:categorie:update')" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
-          <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:update') && scope.row.status == 0" type="primary" link @click="addOrUpdateHandle(scope.row.id)">{{ $t("update") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:categorie:delete') && scope.row.status == 0" type="primary" link @click="state.deleteHandle(scope.row.id)">{{ $t("delete") }}</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
-    <addCommentCategory ref="addCommentKey"></addCommentCategory>
+    <addCommentCategory ref="addCommentKey" @refreshDataList="state.getDataList"></addCommentCategory>
     <CheckResult ref="checkResultKey"></CheckResult>
     <History ref="historyRef"></History>
   </div>
@@ -65,7 +65,7 @@
 
 <script lang="ts" setup>
 import useView from "@/hooks/useView";
-import { nextTick, reactive, ref, toRefs, watch } from "vue";
+import { nextTick, reactive, ref, toRefs } from "vue";
 import AddOrUpdate from "./categorie-add-or-update.vue";
 import addCommentCategory from "./categorie-comment-add.vue"
 import CheckResult from "./result.vue"

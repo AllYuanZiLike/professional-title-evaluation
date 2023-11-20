@@ -22,8 +22,8 @@
       </el-form-item>
       <el-form-item label="是否是附加轮" prop="isAdditional">
         <el-radio-group v-model="dataForm.isAdditional">
-          <el-radio label=1>是</el-radio>
-          <el-radio label=0>否</el-radio>
+          <el-radio label='1'>是</el-radio>
+          <el-radio label='0'>否</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -240,6 +240,7 @@ const getInfo = (id: number) => {
 
 // 表单提交
 const dataFormSubmitHandle = () => {
+  console.log(dataForm)
   dataFormRef.value.validate((valid: boolean) => {
     if (!valid) {
       return false;

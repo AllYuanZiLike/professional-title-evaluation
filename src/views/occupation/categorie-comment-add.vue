@@ -34,9 +34,11 @@ const submitCommentId = ()=>{
     console.log(res)
     if(res.code!=0) return false;
     ElMessage.success("添加成功")
+    visible.value = false;
   })
 }
 
+const emit = defineEmits(["refreshDataList"]);
 const getCommentList = (id:string)=>{
   baseService.get("/occupation/categorie/SelectComment",{id:id}).then(res=>{
     console.log(res)
@@ -44,6 +46,7 @@ const getCommentList = (id:string)=>{
     dataForm.commentList=res.data.list;
     console.log(dataForm.commentList)
     visible.value = true;
+    emit("refreshDataList");
   })
 
 }

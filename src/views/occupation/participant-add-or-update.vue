@@ -22,7 +22,7 @@
           <el-option v-for="item in units" :key="item.id" :label="item.name" :value="item.id"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="学科组" prop="sGroup">
+      <el-form-item label="学科组" prop="sgroup">
 <!--        <el-input v-model="dataForm.group" placeholder="学科组"></el-input>-->
         <el-select v-model="dataForm.sgroup" placeholder="请选择学科组">
           <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
@@ -52,7 +52,7 @@
           <el-option v-for="item in honorTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="文件" prop="fileId">
+      <el-form-item label="文件" prop="fileName">
 <!--        <el-input v-model="dataForm.fileId" placeholder="文件"></el-input>-->
         <el-button @click="uploadFile()">点击上传文件</el-button>
       </el-form-item>
@@ -88,7 +88,7 @@ const dataForm = reactive({
   positionId: "",
   recommendType: "",
   honoraryName: "",
-  fileId: "",
+  // fileId: "",
   fileName:"",
   creator: "",
   createDate: "",
@@ -160,7 +160,7 @@ const rules = ref({
   positionId: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   recommendType: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   honoraryName: [{ required: true, message: t("validate.required"), trigger: "blur" }],
-  fileId: [{ required: true, message: t("validate.required"), trigger: "blur" }],
+  fileName: [{ required: true,message: t("validate.required"), trigger: "blur" }],
 });
 interface ListItem {
   value: string
