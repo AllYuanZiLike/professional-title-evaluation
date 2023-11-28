@@ -1,6 +1,6 @@
 <template>
   <div class="mod-occupation__participant">
-    <el-dialog v-model="superiorAddVisible" title="添加被评审人" width="70%" center>
+    <el-dialog v-model="superiorAddVisible" title="添加评委" width="70%" center>
       <el-form :inline="true" :model="state.dataForm" @keyup.enter="getSuperiors()">
         <el-form-item>
           <!--        <el-input style="width: 160px;" v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
@@ -21,7 +21,7 @@
         <el-button @click="superiorAddVisible = false">{{ $t("cancel") }}</el-button>
         <el-button type="primary" @click="dataFormUserSubmitHandle()">{{ $t("confirm") }}</el-button>
       </template>
-      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle" @current-change="pageCurrentChangeHandle"> </el-pagination>
     </el-dialog>
   </div>
 </template>
@@ -119,8 +119,22 @@ const getSuperiors = ()=>{
     console.log(res)
     if(res.code!=0) return false;
     state.dataUserForm = res.data.list;
+    state.total = res.data.total
   })
 }
+
+// 分页, 每页条数
+const pageSizeChangeHandle = (val: number)=> {
+  state.page = 1;
+  state.limit = val;
+  getSuperiors();
+}
+// 分页, 当前页
+const pageCurrentChangeHandle = (val: number) => {
+  state.page = val;
+  getSuperiors();
+}
+
 const dataListSelectionChange=(val:any)=>{
   console.log(val)
   for (let i = 0; i < val.length; i++) {

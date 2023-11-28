@@ -46,7 +46,7 @@
       <el-table v-loading="state.dataListLoading" ref="dataUserListRef" :data="state.dataUserForm" border @selection-change="dataListSelectionChange" style="width: 100%">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="name" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="honoraryName" label="职称类型" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="honorary" label="职称类型" header-align="center" align="center"></el-table-column>
         <el-table-column prop="applicationName" label="申报类型" header-align="center" align="center"></el-table-column>
         <el-table-column prop="groupName" label="学科组" header-align="center" align="center"></el-table-column>
         <el-table-column prop="recommendName" label="推荐类型" header-align="center" align="center"></el-table-column>
@@ -55,7 +55,7 @@
         <el-button @click="superiorAddVisible = false">{{ $t("cancel") }}</el-button>
         <el-button type="primary" @click="dataFormUserSubmitHandle()">{{ $t("confirm") }}</el-button>
       </template>
-      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle" @current-change="pageCurrentChangeHandle"> </el-pagination>
     </el-dialog>
   </div>
 </template>
@@ -153,8 +153,22 @@ const getSuperiors = ()=>{
     console.log(res)
     if(res.code!=0) return false;
     state.dataUserForm = res.data.list;
+    state.total = res.data.total
   })
 }
+
+// 分页, 每页条数
+const pageSizeChangeHandle = (val: number)=> {
+  state.page = 1;
+  state.limit = val;
+  getSuperiors();
+}
+// 分页, 当前页
+const pageCurrentChangeHandle = (val: number) => {
+  state.page = val;
+  getSuperiors();
+}
+
 const dataListSelectionChange=(val:any)=>{
   console.log(val)
   for (let i = 0; i < val.length; i++) {

@@ -84,6 +84,7 @@ const getDetailsList = ()=>{
     console.log(res)
     if(res.code != 0) return false
     resultList.value = res.data.list;
+    state.total = res.data.total;
     resultList.value.map(item=>{
       let a = dayjs(item.updateDate)
       item.updateDate = a.format('YYYY年MM月DD日 HH:mm:ss')

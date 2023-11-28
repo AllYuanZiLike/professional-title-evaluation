@@ -1,6 +1,6 @@
 <template>
   <div class="mod-occupation__comment">
-    <el-drawer v-model="drawerJudge"  title="被评审人列表" direction="rtl" size="85%">
+    <el-drawer v-model="drawerJudge"  title="评委列表" direction="rtl" size="85%">
       <el-form :inline="true" :model="state.dataForm" @keyup.enter="getParticipants">
        <el-form-item style="width: 18vw;">
           <!--        <el-input v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
@@ -31,7 +31,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle" @current-change="pageCurrentChangeHandle"> </el-pagination>
       <!-- 弹窗, 新增  -->
       <judgeAdd ref="judgeAddRef" @getSuperiorsList="getParticipants()"></judgeAdd>
     </el-drawer>
@@ -149,7 +149,20 @@ const getParticipants = ()=>{
     console.log(res)
     if(res.code != 0) return false
     participants.value = res.data.list;
+    state.total = res.data.total;
   })
+}
+
+// 分页, 每页条数
+const pageSizeChangeHandle = (val: number)=> {
+  state.page = 1;
+  state.limit = val;
+  getParticipants();
+}
+// 分页, 当前页
+const pageCurrentChangeHandle = (val: number) => {
+  state.page = val;
+  getParticipants();
 }
 
 const delJudgeIds = ref<Array<string>>([])

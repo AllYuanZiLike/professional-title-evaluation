@@ -29,7 +29,8 @@
             <el-table-column header-align="center" align="center" label="职评活动" prop="name" />
             <el-table-column header-align="center" align="center" label="评审进度">
               <template v-slot="scope">
-                <el-progress :percentage="Math.floor((scope.row.voted)/(scope.row.judgeNumber)*100)" />
+                已投：{{scope.row.voted}}，共{{scope.row.judgeNumber}}人
+<!--                <el-progress :percentage="Math.floor((scope.row.voted)/(scope.row.judgeNumber)*100)" />-->
               </template>
             </el-table-column>
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
@@ -65,7 +66,7 @@
 
 <script lang="ts" setup>
 import useView from "@/hooks/useView";
-import { nextTick, reactive, ref, toRefs } from "vue";
+import { nextTick, reactive, ref, toRefs} from "vue";
 import AddOrUpdate from "./categorie-add-or-update.vue";
 import addCommentCategory from "./categorie-comment-add.vue"
 import CheckResult from "./result.vue"

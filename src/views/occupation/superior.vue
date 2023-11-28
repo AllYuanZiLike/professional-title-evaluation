@@ -41,7 +41,7 @@
       <el-table v-loading="state.dataListLoading" :data="participants" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="name" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="honoraryName" label="职称类型" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="honorary" label="职称类型" header-align="center" align="center"></el-table-column>
         <el-table-column prop="applicationName" label="申报类型" header-align="center" align="center"></el-table-column>
         <el-table-column prop="groupName" label="学科组" header-align="center" align="center"></el-table-column>
         <el-table-column prop="recommendName" label="推荐类型" header-align="center" align="center"></el-table-column>
@@ -51,7 +51,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
+      <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle" @current-change="pageCurrentChangeHandle"> </el-pagination>
       <!-- 弹窗, 新增  -->
       <SuperiorAdd ref="superiorAddRef" @getSuperiorsList="getParticipants()"></SuperiorAdd>
     </el-drawer>
@@ -169,7 +169,20 @@ const getParticipants = ()=>{
     console.log(res)
     if(res.code != 0) return false
     participants.value = res.data.list;
+    state.total = res.data.total;
   })
+}
+
+// 分页, 每页条数
+const pageSizeChangeHandle = (val: number)=> {
+  state.page = 1;
+  state.limit = val;
+  getParticipants();
+}
+// 分页, 当前页
+const pageCurrentChangeHandle = (val: number) => {
+  state.page = val;
+  getParticipants();
 }
 
 const delSuperiorIds = ref<Array<string>>([])
