@@ -24,6 +24,7 @@ const dataForm = reactive({
   commentList:[]
 })
 const init = (id:string) => {
+  dataForm.commentList = [];
   dataForm.categoryId = id
   getCommentList(id)
 };

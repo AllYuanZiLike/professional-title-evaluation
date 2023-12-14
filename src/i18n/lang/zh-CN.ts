@@ -2,9 +2,9 @@ export default {
   ui: {
     app: {
       //产品信息
-      name: "星火",
-      productName: "星火服务平台",
-      productNameMini: "星火",
+      name: "职称评审",
+      productName: "职称评审平台",
+      productNameMini: "职称评审",
       copyright: "renren.io"
     },
     setting: {

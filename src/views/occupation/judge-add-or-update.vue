@@ -137,6 +137,7 @@ const pageCurrentChangeHandle = (val: number) => {
 
 const dataListSelectionChange=(val:any)=>{
   console.log(val)
+  state.dataForm.judgeArr = [];
   for (let i = 0; i < val.length; i++) {
     state.dataForm.judgeArr[i] = val[i].id;
   }

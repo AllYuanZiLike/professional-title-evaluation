@@ -115,15 +115,15 @@ const applicationTypes = reactive([
 const groups = reactive([
   {
     value:0,
-    label:"自然科学"
+    label:"农科"
   },
   {
     value:1,
-    label:"人文社科"
+    label:"自然科学"
   },
   {
     value:2,
-    label:"农科"
+    label:"人文社科"
   },
 ])
 const recommendTypes = reactive([

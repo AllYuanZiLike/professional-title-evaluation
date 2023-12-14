@@ -40,7 +40,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="指标数" prop="indicator">
-        <el-input type="number" v-model="dataForm.indicator" placeholder="指标数"></el-input>
+        <el-input type="number" v-model="dataForm.indicator" min="0" placeholder="指标数"></el-input>
       </el-form-item>
       <el-form-item label="评审职称等级" prop="position">
 <!--        <el-input v-model="dataForm.position" placeholder="职称"></el-input>-->

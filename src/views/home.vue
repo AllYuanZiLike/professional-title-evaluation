@@ -1,8 +1,8 @@
 <template>
   <div class="mod-home">
-    <h3>{{ $t("home.desc.title") }}</h3>
+    <h3></h3>
     <ul>
-      <li v-for="item in list" :key="item" v-html="item"></li>
+<!--      <li v-for="item in list" :key="item" v-html="item"></li>-->
     </ul>
   </div>
 </template>

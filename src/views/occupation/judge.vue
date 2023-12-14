@@ -15,7 +15,7 @@
           <el-button v-if="state.hasPermission('occupation:comment:save')" type="primary" @click="judgeAddHandle(state.commentId)">{{ $t("add") }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="delSuperior()">{{ $t("deleteBatch") }}</el-button>
+          <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="delJudge()">{{ $t("deleteBatch") }}</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="info" @click="getParticipants">刷新</el-button>

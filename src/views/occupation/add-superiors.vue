@@ -171,6 +171,7 @@ const pageCurrentChangeHandle = (val: number) => {
 
 const dataListSelectionChange=(val:any)=>{
   console.log(val)
+  state.dataForm.superiorsArr = [];
   for (let i = 0; i < val.length; i++) {
     state.dataForm.superiorsArr[i] = val[i].id;
   }
