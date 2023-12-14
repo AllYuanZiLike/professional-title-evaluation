@@ -66,9 +66,9 @@
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="dataForm.link == 0" label="选取人数" prop="participantNum">
-        <el-input v-model="dataForm.participantNum" placeholder="选取人数"></el-input>
-      </el-form-item>
+<!--      <el-form-item v-if="dataForm.link == 0" label="选取人数" prop="participantNum">-->
+<!--        <el-input v-model="dataForm.participantNum" placeholder="选取人数"></el-input>-->
+<!--      </el-form-item>-->
 <!--      <el-form-item label="指标数" prop="indicator">-->
 <!--        <el-input v-model="dataForm.indicator" placeholder="指标数"></el-input>-->
 <!--      </el-form-item>-->

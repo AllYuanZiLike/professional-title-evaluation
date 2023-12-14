@@ -111,6 +111,10 @@ const applicationTypes = reactive([
     value:2,
     label:"其他（实验人员）"
   },
+  {
+    value:3,
+    label:"无"
+  },
 ])
 const groups = reactive([
   {
@@ -160,7 +164,7 @@ const rules = ref({
   positionId: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   recommendType: [{ required: true, message: t("validate.required"), trigger: "blur" }],
   honoraryName: [{ required: true, message: t("validate.required"), trigger: "blur" }],
-  fileName: [{ required: true,message: t("validate.required"), trigger: "blur" }],
+  // fileName: [{ required: true,message: t("validate.required"), trigger: "blur" }],
 });
 interface ListItem {
   value: string

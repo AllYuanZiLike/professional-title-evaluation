@@ -36,7 +36,7 @@
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
               <template v-slot="scope">
 <!--                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>-->
-                <el-button v-if="state.hasPermission('occupation:categorie:deleteComment') && scope.row.status == 0" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:deleteComment') && props.row.status == 0" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
                 <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.isPass)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
               </template>
             </el-table-column>

@@ -23,6 +23,9 @@
         <el-form-item>
           <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="info" @click="state.getDataList()">刷新</el-button>
+        </el-form-item>
 <!--        <el-form-item>-->
 <!--          <el-button v-if="state.hasPermission('occupation:result:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>-->
 <!--        </el-form-item>-->
