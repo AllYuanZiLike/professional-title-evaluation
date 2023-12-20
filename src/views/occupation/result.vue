@@ -17,11 +17,27 @@
         <el-form-item>
           <el-input v-model="state.dataForm.count" placeholder="得票数" clearable></el-input>
         </el-form-item>
+        <el-form-item v-if="state.commentStatus==2">
+          <!--        <el-input v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
+          <el-select v-model="state.dataForm.result" clearable filterable placeholder="推荐结果">
+            <el-option v-for="item in resultText" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button @click="state.getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>
+<!--          <el-popover placement="right" :width="330" trigger="click">-->
+<!--            <template #reference>-->
+<!--              <el-button type="info" @click="state.exportHandle()">{{ $t("export") }}</el-button>-->
+<!--            </template>-->
+<!--            <div class="export-btn-box">-->
+<!--              <el-button type="info" @click="state.exportHandle()">导出全部</el-button>-->
+<!--              <el-button type="info" @click="state.exportHandle()">导出通过</el-button>-->
+<!--              <el-button type="info" @click="state.exportHandle()">导出未通过</el-button>-->
+<!--            </div>-->
+<!--          </el-popover>-->
         </el-form-item>
         <el-form-item>
           <el-button type="info" @click="state.getDataList()">刷新</el-button>
@@ -35,9 +51,9 @@
       </el-form>
       <el-table v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-        <el-table-column prop="commentName" label="评审活动" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="commentName" label="职评活动" header-align="center" align="center"></el-table-column>
         <el-table-column prop="participantName" label="参与人" header-align="center" align="center"></el-table-column>
-<!--        <el-table-column prop="result" label="推荐意见（结果）" header-align="center" align="center"></el-table-column>-->
+        <el-table-column prop="resultName" label="推荐意见（结果）" header-align="center" align="center" v-if="state.commentStatus == 2"></el-table-column>
         <el-table-column prop="count" label="得票数" header-align="center" align="center"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template v-slot="scope">
@@ -58,6 +74,7 @@ import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 import Details from "./details.vue"
 import baseService from "@/service/baseService";
+import Template from "@/views/devtools/template.vue";
 
 const view = reactive({
   getDataListURL: "/occupation/result/page",
@@ -67,6 +84,7 @@ const view = reactive({
   deleteIsBatch: true,
   commentId:"",
   categoryId:"",
+  commentStatus:0,
   dataForm: {
     commentId: "",
     participantId: "",
@@ -79,14 +97,15 @@ const state = reactive({ ...useView(view), ...toRefs(view) });
 const drawerResult = ref(false);
 const resultList = ref([]);
 const resultText = ref([
-  {value:0,label:"通过"},
-  {value:1,label:"不通过"},
+  {value:0,label:"未通过"},
+  {value:1,label:"通过"},
 ])
 
-const init = (id: string,commentId:string) => {
+const init = (id: string,commentId:string,commentStatus:number) => {
   drawerResult.value = true;
   state.commentId = commentId;
-  state.dataForm.commentId = commentId
+  state.commentStatus = commentStatus;
+  state.dataForm.commentId = commentId;
   state.categoryId = id
   state.getDataList()
 };

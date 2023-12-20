@@ -12,6 +12,12 @@
           </el-select>
         </el-form-item>
         <el-form-item>
+          <!--        <el-input style="width: 160px;" v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
+          <el-select style="width: 160px;" v-model="state.dataForm.sgroup" clearable placeholder="请选择学科组">
+            <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
           <!--        <el-input style="width: 160px;" v-model="state.dataForm.applicationType" placeholder="申报类型" clearable></el-input>-->
           <el-select style="width: 160px;" v-model="state.dataForm.applicationType" clearable placeholder="请选择申报类型">
             <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
@@ -20,12 +26,7 @@
         <!--      <el-form-item>-->
         <!--        <el-input v-model="state.dataForm.unitId" placeholder="推荐单位" clearable></el-input>-->
         <!--      </el-form-item>-->
-        <el-form-item>
-          <!--        <el-input style="width: 160px;" v-model="state.dataForm.sgroup" placeholder="学科组" clearable></el-input>-->
-          <el-select style="width: 160px;" v-model="state.dataForm.sgroup" clearable placeholder="请选择学科组">
-            <el-option v-for="item in groups" :key="item.value" :label="item.label" :value="item.value"/>
-          </el-select>
-        </el-form-item>
+
         <!--      <el-form-item>-->
         <!--        <el-input v-model="state.dataForm.professionalId" placeholder="申报专业" clearable></el-input>-->
         <!--      </el-form-item>-->

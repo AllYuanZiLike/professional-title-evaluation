@@ -116,7 +116,7 @@ const view = reactive({
     recommendType: "",
     honoraryName: "",
   },
-  dataList:[]
+  dataList:[{reserve01:""}]
 });
 
 const state = reactive({ ...useView(view), ...toRefs(view) });

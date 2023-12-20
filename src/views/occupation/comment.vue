@@ -29,6 +29,9 @@
           <el-option v-for="item in applicationTypes" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
+      <el-form-item style="width: 8vw">
+        <el-date-picker v-model="state.dataForm.year" type="year" value-format="YYYY" placeholder="活动年份"></el-date-picker>
+      </el-form-item>
       <el-form-item>
         <el-button @click="state.getDataList()">{{ $t("query") }}</el-button>
       </el-form-item>
@@ -38,9 +41,9 @@
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:comment:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
-      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button v-if="state.hasPermission('occupation:comment:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:comment:history')" type="info" @click="checkHistory">历史</el-button>
       </el-form-item>
@@ -48,11 +51,7 @@
     <el-table v-loading="state.dataListLoading" :data="state.dataList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
       <el-table-column prop="name" label="评议活动名称" header-align="center" align="center"></el-table-column>
-      <el-table-column prop="info" label="评议活动介绍" header-align="center" align="center">
-        <template v-slot="scope">
-          <p v-html="scope.row.info"></p>
-        </template>
-      </el-table-column>
+      <el-table-column prop="year" label="年份" header-align="center" align="center"></el-table-column>
 <!--      <el-table-column prop="superiors" label="上级评审ids" header-align="center" align="center"></el-table-column>-->
       <el-table-column prop="indicator" label="指标数" header-align="center" align="center"></el-table-column>
       <el-table-column prop="positionName" label="评审职称等级" header-align="center" align="center"></el-table-column>
@@ -108,6 +107,7 @@ const view = reactive({
     sgroup: "",
     recommendType: "",
     applicationType: "",
+    year:""
   }
 });
 

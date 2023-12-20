@@ -29,7 +29,7 @@
       </el-form>
       <el-table v-loading="state.dataListLoading" :data="resultList" border @selection-change="state.dataListSelectionChangeHandle" style="width: 100%">
 <!--        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>-->
-        <el-table-column prop="commentName" label="评审活动" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="commentName" label="职评活动" header-align="center" align="center"></el-table-column>
         <el-table-column prop="participantName" label="候选人" header-align="center" align="center"></el-table-column>
         <el-table-column prop="opinionName" label="推荐意见" header-align="center" align="center"></el-table-column>
         <el-table-column prop="judgeName" label="评委" header-align="center" align="center"></el-table-column>

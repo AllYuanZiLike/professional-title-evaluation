@@ -88,7 +88,7 @@ const dataForm = reactive({
   positionId: "",
   recommendType: "",
   honoraryName: "",
-  // fileId: "",
+  sex: "",
   fileName:"",
   creator: "",
   createDate: "",
@@ -170,9 +170,9 @@ interface ListItem {
   value: string
   label: string
 }
-let units = ref([])
-let professes = ref([])
-let positions = ref([])
+let units = ref([{id:"",name:""}])
+let professes = ref([{id:"",name:""}])
+let positions = ref([{id:"",name:""}])
 const getInitData = ()=> {
   baseService.get("/occupation/unit/page", {order: "", orderField: "", page: 1, limit: 100, ...{name: "",}}).then(res=>{
     if(res.code !== 0) return false;
@@ -223,7 +223,7 @@ const getFileId = (list:any)=>{
   console.log(list.value[0].response.data.url)
   // dataForm.fileId = list.value[0].uid.toString();
   dataForm.fileName = list.value[0].name;
-  dataForm.reserve01 = list.value[0].response.data.url;
+  dataForm.reserve02 = list.value[0].response.data.url;
 }
 // 表单提交
 const dataFormSubmitHandle = () => {

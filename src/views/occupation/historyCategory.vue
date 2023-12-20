@@ -26,7 +26,7 @@
             </el-table-column>
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
               <template v-slot="scope">
-               <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.isPass)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
+               <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.status)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -68,6 +68,16 @@ const init = () => {
   state.getDataList();
 };
 
+interface Comment {
+  name:string
+  id:string
+  isOver:number
+  judgeNumber:number
+  participantNum:number
+  status:number
+  voted:number
+}
+
 const commentsPage = ref([]);
 const loadComments = (row: Comment, expandedRows:Comment) => {
   console.log(row)
@@ -81,9 +91,9 @@ const loadComments = (row: Comment, expandedRows:Comment) => {
 }
 
 const checkResultKey = ref();
-const checkResultHandle = (id:string,commentId:string)=>{
+const checkResultHandle = (id:string,commentId:string,commentStatus:number)=>{
   nextTick(() => {
-    checkResultKey.value.init(id,commentId);
+    checkResultKey.value.init(id,commentId,commentStatus);
   });
 }
 

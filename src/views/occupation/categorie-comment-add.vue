@@ -1,8 +1,12 @@
 <template>
   <el-dialog v-model="visible" title="添加职评活动" :close-on-click-modal="false" :close-on-press-escape="false" width="30%">
-    <el-select v-model="commentId" placeholder="请选择职评活动" multiple style="width: 100%;" @change="getCommentList(dataForm.categoryId)">
-      <el-option v-for="item in dataForm.commentList" :key="item.id" :label="item.name" :value="item.id" />
-    </el-select>
+    <el-form :model="dataForm" ref="dataFormRef" @keyup.enter="submitCommentId()" label-width="22%">
+      <el-form-item label="职评活动">
+        <el-select v-model="commentId" placeholder="请选择" multiple style="width: 100%;" @change="getCommentList(dataForm.categoryId)">
+          <el-option v-for="item in dataForm.commentList" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+    </el-form>
     <template v-slot:footer>
       <el-button @click="visible = false">{{ $t("cancel") }}</el-button>
       <el-button type="primary" @click="submitCommentId()">{{ $t("confirm") }}</el-button>
@@ -19,11 +23,15 @@ const visible = ref(false);
 
 const commentId = ref([]);
 
+const dataFormRef = ref()
 const dataForm = reactive({
   categoryId:"",
-  commentList:[]
+  commentList:[{id:"",name:""}]
 })
 const init = (id:string) => {
+  if(dataFormRef.value) {
+    dataFormRef.value.resetField();
+  }
   dataForm.commentList = [];
   console.log(dataForm.commentList)
   dataForm.categoryId = id

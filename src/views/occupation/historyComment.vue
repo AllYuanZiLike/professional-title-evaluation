@@ -73,7 +73,7 @@
     </el-table>
     <el-pagination :current-page="state.page" :page-sizes="[10, 20, 50, 100]" :page-size="state.limit" :total="state.total" layout="total, sizes, prev, pager, next, jumper" @size-change="state.pageSizeChangeHandle" @current-change="state.pageCurrentChangeHandle"> </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
+<!--    <add-or-update :key="addKey" ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>-->
     <Superiors ref="superiorRef"></Superiors>
     <Judge ref="judgeRef"></Judge>
     </el-drawer>

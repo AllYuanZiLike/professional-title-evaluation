@@ -4,9 +4,9 @@
       <el-form-item label="评议活动名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="评议活动名称"></el-input>
       </el-form-item>
-      <el-form-item label="评议活动介绍" prop="info">
+      <el-form-item label="评议活动介绍" prop="info" style="height: 400px">
 <!--        <el-input v-model="dataForm.info" placeholder="评议活动介绍"></el-input>-->
-        <wangEditor v-model="dataForm.info" style="height: 15vh"></wangEditor>
+        <wangEditor v-model="dataForm.info"></wangEditor>
       </el-form-item>
       <el-form-item label="第几环节" prop="link">
         <!--        <el-input v-model="dataForm.link" placeholder="第几环节"></el-input>-->
@@ -21,10 +21,11 @@
         <el-input-number v-model="dataForm.round" :min="1" :max="3" />(至少第1轮，至多第3轮)
       </el-form-item>
       <el-form-item label="是否是附加轮" prop="isAdditional">
-        <el-radio-group v-model="dataForm.isAdditional">
-          <el-radio label='1'>是</el-radio>
-          <el-radio label='0'>否</el-radio>
-        </el-radio-group>
+        <el-input-number v-model="dataForm.isAdditional" :min="0" :max="2" />(0不是附加轮，1是插入结果的附加轮，2是不插入结果)
+<!--        <el-radio-group v-model="dataForm.isAdditional">-->
+<!--          <el-radio label='1'>是</el-radio>-->
+<!--          <el-radio label='0'>否</el-radio>-->
+<!--        </el-radio-group>-->
       </el-form-item>
 
 <!--      <el-form-item label="活动状态" prop="status">-->
@@ -35,12 +36,12 @@
           <el-radio label="1">是</el-radio>
           <el-radio label="2">否</el-radio>
         </el-radio-group>
-        <el-select v-if="isZero == '1'" v-model="dataForm.superiorsArr" multiple collapse-tags collapse-tags-tooltip placeholder="选择上级评审" style="width: 73.5%;margin-left: 2vw">
+        <el-select v-if="isZero == 1" v-model="dataForm.superiorsArr" multiple collapse-tags collapse-tags-tooltip placeholder="选择上级评审" style="width: 73.5%;margin-left: 2vw">
           <el-option v-for="item in overdResId" :key="item.id" :label="item.name" :value="item.id"/>
         </el-select>
       </el-form-item>
       <el-form-item label="指标数" prop="indicator">
-        <el-input type="number" v-model="dataForm.indicator" min="0" placeholder="指标数"></el-input>
+        <el-input type="number" @mousewheel.prevent v-model="dataForm.indicator" min="0" placeholder="指标数"></el-input>
       </el-form-item>
       <el-form-item label="评审职称等级" prop="position">
 <!--        <el-input v-model="dataForm.position" placeholder="职称"></el-input>-->
@@ -114,7 +115,7 @@ const dataForm = reactive({
   participantNum: "",
   residualIndicator: "",
   stage: "",
-  link: "",
+  link: 0,
   indicatorType: "",
   startTime: "",
   endTime: "",
@@ -154,15 +155,15 @@ const groups = reactive([
   },
   {
     value:0,
-    label:"自然科学"
+    label:"农科"
   },
   {
     value:1,
-    label:"人文社科"
+    label:"自然科学"
   },
   {
     value:2,
-    label:"农科"
+    label:"人文社科"
   },
 
 ])
@@ -200,7 +201,7 @@ const positions = reactive([
   },
 
 ])
-const overdResId = ref([]);
+const overdResId = ref([{id:"",name:""}]);
 
 const rules = ref({
 });

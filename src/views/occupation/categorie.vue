@@ -5,6 +5,9 @@
         <el-input v-model="state.dataForm.name" placeholder="类别名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
+        <el-date-picker v-model="state.dataForm.year" type="year" value-format="YYYY" placeholder="活动年份"></el-date-picker>
+      </el-form-item>
+      <el-form-item>
         <el-button @click="state.getDataList()">{{ $t("query") }}</el-button>
       </el-form-item>
 <!--      <el-form-item>-->
@@ -13,9 +16,9 @@
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:categorie:save')" type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>
-      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button v-if="state.hasPermission('occupation:categorie:delete')" type="danger" @click="state.deleteHandle()">{{ $t("deleteBatch") }}</el-button>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button v-if="state.hasPermission('occupation:categorie:history')" type="info" @click="checkHistory">历史</el-button>
       </el-form-item>
@@ -35,9 +38,9 @@
             </el-table-column>
             <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
               <template v-slot="scope">
-<!--                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>-->
+<!--                <el-button v-if="state.hasPermission('occupation:categorie:confirmRes') && scope.row.status == 1" type="primary" link @click="confirmResHandle(props.row.id,scope.row.id)">确认结果</el-button>    scope.row.isPass -->
                 <el-button v-if="state.hasPermission('occupation:categorie:deleteComment') && props.row.status == 0" type="primary" link @click="deleteCommentHandle(props.row.id,scope.row.id)">{{ $t("delete") }}</el-button>
-                <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.isPass)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
+                <el-button v-if="state.hasPermission('occupation:categorie:checkResult') && scope.row.status != 0" type="primary" link @click="checkResultHandle(props.row.id,scope.row.id,scope.row.status)">查看{{scope.row.status == 1 ? '过程':'结果'}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -84,22 +87,24 @@ const view = reactive({
   dataForm: {
     name: "",
     status:"",//类别状态
+    year:"",//活动年份
   },
   dataList:[{commentsPage:[] as any}]
 });
 
 const state = reactive({ ...useView(view), ...toRefs(view) });
 
-// interface Comment {
-//   name:string
-//   id:string
-//   isOver:number
-//   judgeNumber:number
-//   participantNum:number
-//   status:number
-//   voted:number
-// }
+interface Comment {
+  name:string
+  id:string
+  isOver:number
+  judgeNumber:number
+  participantNum:number
+  status:number
+  voted:number
+}
 interface Categoty {
+  id:string
   commentIds: Array<any>
   commentsPage: Array<any>
 }
@@ -110,6 +115,9 @@ const loadComments = (row: Categoty, expandedRows:any,isExpanded:boolean) => {
   console.log(row)
   console.log(expandedRows)
   console.log(isExpanded)
+  if(expandedRows.length>1){
+    expandedRows.shift()
+  }
   baseService.get("/occupation/categorie/CommentsPage",{id:row.id}).then(res=>{
     console.log(res)
     if(res.code!=0) return false;
@@ -137,9 +145,9 @@ const addComment = (id:string)=>{
 
 
 const checkResultKey = ref();
-const checkResultHandle = (id:string,commentId:string)=>{
+const checkResultHandle = (id:string,commentId:string,commentStatus:number)=>{
   nextTick(() => {
-    checkResultKey.value.init(id,commentId);
+    checkResultKey.value.init(id,commentId,commentStatus);
   });
 }
 

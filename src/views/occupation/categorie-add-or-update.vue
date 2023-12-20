@@ -34,6 +34,7 @@ const dataForm = reactive({
   creator: "",
   createDate: "",
   updator: "",
+  content:"",
   updateDate: "",
   reserve01: "",
   reserve02: "",
