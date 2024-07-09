@@ -108,7 +108,7 @@ const dataForm = reactive({
   indicator: "",
   position: "",
   sgroup: "",
-  round:"",
+  round:"0",
   isAdditional:0,
   recommendType: "",
   applicationType: "",
